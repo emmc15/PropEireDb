@@ -1,0 +1,41 @@
+version: "3.4"
+
+services:
+  propeiredb:
+    container_name: propeiredb
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    #entrypoint: gunicorn wsgi:server -c gunicorn.conf.py
+    entrypoint: sleep infinity
+    restart: unless-stopped
+    environment:
+      POSTGRES_DSN: ${POSTGRES_DSN:-postgresql://admin:password@propeiredb-pgdb:5432/propeiredb}
+      REDIS_DSN: ${REDIS_DSN:-redis://propeiredb-redis:6379}
+    volumes:
+      - ./:/workspace
+    ports:
+      - "8000:8000"
+
+  #sudo docker exec -it pgdb_property psql -U property -d property_register
+  postgres:
+    container_name: propeiredb-pgdb
+    image: postgres:14.2-alpine
+    shm_size: "4gb"
+    restart: unless-stopped
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+    environment:
+      # POSTGRES_DB: ${POSTGRES_DB:-propeiredb}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+    ports:
+      - "5432:5432"
+
+  propeiredb_redis:
+    container_name: propeiredb-redis
+    image: redis:5.0.6-alpine
+    restart: unless-stopped
+    command: redis-server
+    ports:
+      - "6379:6379"

@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "propeiredb"
+version = "0.1.0"
+description = "Irish Property Database"
+authors = ["emmett <emmettcarey95@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+pandas = "^2.0.3"
+shapely = "^2.0.1"
+dash = "^2.11.1"
+flask-caching = "^2.0.2"
+dash-bootstrap-components = "^1.4.2"
+requests = "^2.31.0"
+python-dotenv = "^1.0.0"
+click = "^8.1.6"
+gunicorn = "^21.2.0"
+sqlalchemy = "^2.0.19"
+redis = "^4.6.0"
+psycopg2-binary = "^2.9.6"
+tdqm = "^0.0.1"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+black = "^23.7.0"
+flake8 = "^6.0.0"
+pylint = "^2.17.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
