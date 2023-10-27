@@ -6,7 +6,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    #entrypoint: gunicorn wsgi:server -c gunicorn.conf.py
+    #entrypoint: gunicorn wsgi:server -b 8000
     entrypoint: sleep infinity
     restart: unless-stopped
     environment:
