@@ -8,18 +8,24 @@ from dash import html
 
 from server_config import application
 
-#### CSS Theme Variables ####
-setting = "dark"
+# -----------------------------------------------------------------------------
+# CSS Theme Variables 
+# -----------------------------------------------------------------------------
+setting = "light"
 
 if setting == "light":
-    nav_bar_css = "navbar navbar-expand-lg navbar-light bg-primary"
-    summary_cards_css = "card text-white bg-secondary mb-3"
+    nav_bar_css = "navbar navbar-expand-lg navbar-dark bg-dark container-fluid no-padding"
+    div_main_css = "card text-white bg-primary mb-3"
+    summary_cards_css = "card text-white bg-success mb-3"
 else:
-    nav_bar_css = "navbar navbar-expand-lg navbar-dark bg-dark"
+    nav_bar_css = "navbar navbar-expand-lg navbar-dark bg-dark container-fluid no-padding"
     div_main_css = "card text-white bg-primary mb-3"
     summary_cards_css = "card text-white bg-success mb-3"
 
-#### Setting the variables #####
+
+# -----------------------------------------------------------------------------
+# Initialisation
+# -----------------------------------------------------------------------------
 
 # List for charts
 chart = ["Line Chart", "Violin Chart", "Bar Chart"]
@@ -33,7 +39,6 @@ for i in chart:
         charts.append("Violin Chart - Price")
 
 
-#### Navbar Simple ####
 navbar_simple = dbc.NavbarSimple(
     children=[
         dbc.DropdownMenu(
@@ -80,9 +85,6 @@ dropdown = dbc.DropdownMenu(
     right=True,
 )
 
-
-#### Navbar Complex ####
-# Base Navbar insert layout
 base_navbar = dbc.Container(
     [
         # Sets the branding and the title
@@ -106,10 +108,9 @@ base_navbar = dbc.Container(
 # Final creation of the nav bar
 navbar_complex = dbc.Navbar(base_navbar, id="nav-bar", className=nav_bar_css, color="green")
 
-
-#### Region Selection #####
-
-# Region Choice
+# -----------------------------------------------------------------------------
+# Regions
+# -----------------------------------------------------------------------------
 region_choice = html.Div(
     [
         html.H6("Select Map Type"),
@@ -231,28 +232,11 @@ input_column = html.Div(
         invert_choice,
         html.Br(),
         date_picker,
-        # html.Br(),
-        # year_slider,
-        # html.Br(),
-        # period_slider,
-        # update_button,
+
         html.Br(),
     ]
 )
 
-# Converts to column and sets the widths for reformatting on different screens
-# input_column = dbc.Col([input_column], width=2, md=2, lg=2, xl=2, sm=12, xs=12)
-
-#### Map Column ####
-# Map Column
-# map_column=dbc.Col(
-#    #Loading component to show user map is loading in long wait times
-#    dcc.Loading(id='map-loading',
-#        children=[dcc.Graph(id='mapbox', style={"width": "75%", 'height':'100%', "display": "inline-block"})],
-#        type='cirlce',
-#        color='#18BC9C'),
-#    width=6, md=6, lg=6,xl=6,sm=12,xs=12
-# )
 
 # Used below instead as issue with loading object and hover data
 # NOTE: https://community.plot.ly/t/choroplethmapbox-hover-problem/33218
@@ -469,18 +453,24 @@ inputs_div = html.Div(id="cached-inputs", style={"display": "none"})
 #### Layout ####
 navbar = navbar_complex
 footer = html.Div([html.Br(), buymeacoffee_image])
-layout = html.Div(
+layout = dbc.Container(
     [
-        navbar,
+        # navbar,
         first_row,
         second_row,
+        html.Br(),
+        html.Br(),
         third_row,
+        html.Br(),
         footer,
         geojson_div,
         inputs_div,
         dcc.Store(id="track-annoying-alert", storage_type="memory"),
-    ]
+    ], 
+    style={"background-color": "#111111"} if setting == 'dark' else None,
+    fluid=True,
 )
+layout = html.Div([navbar, layout])
 
 #### Insert into Server ####
 application.layout = layout  # Assigns the layout
