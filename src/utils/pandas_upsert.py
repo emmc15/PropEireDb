@@ -1,6 +1,7 @@
 """
     @about: Convience wrapper allowing extended control of pandas upload to a database
 """
+import os
 import logging
 from typing import Dict, List, Any
 from concurrent.futures import ThreadPoolExecutor
@@ -35,7 +36,7 @@ class PandaSqlPlus:
     Object used to have finer control of uploading data from sql to pandas
     """
 
-    def __init__(self, sql_engine: str, threads: int = 2):
+    def __init__(self, sql_engine: str, threads: int = os.cpu_count() * 2) -> None:
         self.connection = sql_engine
         self.threads = threads
 

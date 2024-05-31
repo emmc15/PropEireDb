@@ -20,6 +20,7 @@ sqlalchemy = "^2.0.19"
 redis = "^4.6.0"
 psycopg2-binary = "^2.9.6"
 tdqm = "^0.0.1"
+googlemaps = "^4.10.0"
 
 
 [tool.poetry.group.dev.dependencies]

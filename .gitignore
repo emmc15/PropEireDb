@@ -127,5 +127,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Data
+# Custom
 *.csv
+# scratch.ipynb

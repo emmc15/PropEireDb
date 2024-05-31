@@ -399,6 +399,19 @@ cachelib = ">=0.9.0,<0.10.0"
 Flask = "*"
 
 [[package]]
+name = "googlemaps"
+version = "4.10.0"
+description = "Python client library for Google Maps Platform"
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "googlemaps-4.10.0.tar.gz", hash = "sha256:3055fcbb1aa262a9159b589b5e6af762b10e80634ae11c59495bd44867e47d88"},
+]
+
+[package.dependencies]
+requests = ">=2.20.0,<3.0"
+
+[[package]]
 name = "greenlet"
 version = "3.0.3"
 description = "Lightweight in-process concurrent programming"
@@ -1546,4 +1559,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "b3519aedfb1b54083ad9c09b76618ca381b46eb962709df1596fdf372dac0d05"
+content-hash = "203c05e979f6223c5a50636ef6632ac6b0f9ea9d696bc4d79c0f8ce9b98546c0"

@@ -12,7 +12,6 @@ group by province,
     period,
     year
 order by period;
-
 /*county level view */
 create or replace view propeiredb.county_agg_data as
 select county,
@@ -28,7 +27,6 @@ group by county,
     period,
     year
 order by period;
-
 create or replace view propeiredb.region_agg_data as
 select region,
     year,
