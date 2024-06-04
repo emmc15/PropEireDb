@@ -129,4 +129,4 @@ dmypy.json
 
 # Custom
 *.csv
-# scratch.ipynb
+scratch.ipynb
