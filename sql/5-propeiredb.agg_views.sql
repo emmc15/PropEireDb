@@ -1,4 +1,4 @@
-\c propeiredb;
+\c property_register;
 /*province level view */
 create or replace view propeiredb.province_agg_data as
 select province,

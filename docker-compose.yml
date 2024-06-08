@@ -24,10 +24,10 @@ services:
     image: postgres:14.2-alpine
     shm_size: "4gb"
     restart: unless-stopped
-    volumes:
-      - ./sql:/docker-entrypoint-initdb.d
+    # volumes:
+    #   - ./sql:/docker-entrypoint-initdb.d
     environment:
-      # POSTGRES_DB: ${POSTGRES_DB:-propeiredb}
+      POSTGRES_DB: ${POSTGRES_DB:-property_register}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_USER: ${POSTGRES_USER:-admin}
     ports:

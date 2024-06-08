@@ -1,4 +1,4 @@
-\c propeiredb;
+\c property_register;
 CREATE TABLE IF NOT EXISTS "propeiredb".geo_encoding_lookup (
     address_hash TEXT PRIMARY KEY,
     input_address TEXT,
