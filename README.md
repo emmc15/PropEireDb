@@ -16,8 +16,8 @@ Repo for <www.propeiredb.ie>, a dashboard that visualizes Irish Property Registe
 # TODO
 
 - [X] set up geoncode api
-- [ ] basic function to pull geoencode data
+- [X] basic function to pull geoencode data
 - [ ] add cli command
 - [ ] Deploy
 - [ ] Add cron
-- [ ] Create proper restore function
+- [X] Create proper restore function
