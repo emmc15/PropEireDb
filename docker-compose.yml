@@ -10,7 +10,7 @@ services:
     entrypoint: sleep infinity
     restart: unless-stopped
     environment:
-      POSTGRES_DSN: ${POSTGRES_DSN:-postgresql://admin:password@propeiredb-pgdb:5432/propeiredb}
+      POSTGRES_DSN: postgresql://${POSTGRES_USER:-admin}:${POSTGRES_PASSWORD:-password}@propeiredb-pgdb:5432/${POSTGRES_DB:-property_register}
       REDIS_DSN: ${REDIS_DSN:-redis://propeiredb-redis:6379}
       GOOGLE_MAPS_KEY: ${GOOGLE_MAPS_KEY:-}
     volumes:
@@ -24,19 +24,18 @@ services:
     image: postgres:14.2-alpine
     shm_size: "4gb"
     restart: unless-stopped
-    # volumes:
-    #   - ./sql:/docker-entrypoint-initdb.d
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-property_register}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_USER: ${POSTGRES_USER:-admin}
-    ports:
-      - "5432:5432"
+    expose:
+      - 5432
 
   propeiredb_redis:
     container_name: propeiredb-redis
     image: redis:5.0.6-alpine
     restart: unless-stopped
     command: redis-server
-    ports:
-      - "6379:6379"
+    expose:
+      - 6379
