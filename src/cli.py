@@ -6,9 +6,11 @@ import os
 
 import click
 from dotenv import load_dotenv
+import googlemaps
 
 from utils import db_connections as db_con
 from utils.ppr_data_pipeline import download_property_data, process_downloaded_data, upload_ppr_df
+from utils.geo_encode_data import encode_and_upload_missing_addresses
 
 logging.basicConfig(
     level=logging.INFO,
@@ -18,6 +20,8 @@ logging.basicConfig(
 
 
 load_dotenv()
+POSTGRES_DSN = os.getenv("POSTGRES_DSN")
+GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_KEY")
 
 # -----------------------------------------------------------------------------
 # Prep
@@ -30,8 +34,6 @@ def propeiredb_cli():
     Collection of comman commands to execute for running the propeiredb site
     """
     pass
-
-
 
 # -----------------------------------------------------------------------------
 # Extract data from PPR
@@ -62,12 +64,12 @@ def run_pipeline(property_type: str, period: str, force_build: bool = False) -> 
     downloaded = True
     if os.path.exists(file_path) is False or force_build is True:
         downloaded = download_property_data(data_folder_path, period, property_type)
-    
+
     if downloaded is False and os.path.exists(file_name) is False:
         logging.warning("could not parse file as downloading failed")
         return None
 
-    
+
     df = process_downloaded_data(file_path)
 
     db_connection = db_con.create_postgres_sql_connection(os.getenv("POSTGRES_DSN"))
@@ -79,6 +81,16 @@ def run_pipeline(property_type: str, period: str, force_build: bool = False) -> 
 # Backfill Previously mapped data to geo_encode_lookup table
 # -----------------------------------------------------------------------------
 
+@propeiredb_cli.command()
+@click.option("--batch-size", default=100)
+def geoencode_missing_addresses(batch_size: int) -> None:
+    """
+    Backfills the geo_encode_lookup table with previously mapped data
+    """
+    db_connection = db_con.create_postgres_sql_connection(POSTGRES_DSN)
+    gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
+
+    encode_and_upload_missing_addresses(db_connection, gmaps, batch_size=batch_size)
 
 
 if __name__ == "__main__":

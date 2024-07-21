@@ -21,6 +21,7 @@ redis = "^4.6.0"
 psycopg2-binary = "^2.9.6"
 tdqm = "^0.0.1"
 googlemaps = "^4.10.0"
+colour = "^0.1.5"
 
 
 [tool.poetry.group.dev.dependencies]

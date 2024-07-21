@@ -1,7 +1,7 @@
 """
 Functions to help with the geoencoding
 """
-from typing import Any, Dict
+from typing import Any, Dict, List
 import dataclasses
 import googlemaps
 import logging
@@ -11,12 +11,8 @@ from psycopg2.extensions import connection as PostgresConnection
 from shapely.geometry.polygon import Polygon
 from shapely.geometry import Point
 
-
-
-
 from .db_utils import recursive_list_float_extractor
 from .pandas_upsert import PandaSqlPlus
-from .db_connections import create_postgres_sql_connection, create_sql_alchemy_engine
 from .geojson_map_cleanse import DUBLIN_GEOJSON
 
 
@@ -71,7 +67,7 @@ def generate_region_points(geojson: Dict[str, Any]) -> Dict[str, Polygon]:
     return mapped_polygons
 
 
-def assign_region(lon, lat, geojson: Dict[str, Polygon]) -> str | None:
+def assign_region(lon: float, lat: float, geojson: Dict[str, Polygon]) -> str | None:
     """
     Assigns a region based on the lat and lon coordinates and the geojson_details variable defined elsewhere
 
@@ -97,7 +93,8 @@ def assign_region(lon, lat, geojson: Dict[str, Polygon]) -> str | None:
 # Data Extraction
 # -----------------------------------------------------------------------------
 
-def get_addresses_to_encode(postgres_engine) -> pd.DataFrame:
+
+def get_addresses_to_encode(postgres_engine: PostgresConnection, batch_size: int = 100) -> pd.DataFrame:
     """
     Extracts the addresses from the database that have not been geoencoded
 
@@ -107,13 +104,82 @@ def get_addresses_to_encode(postgres_engine) -> pd.DataFrame:
     Returns:
         pd.DataFrame: _description_
     """
-    with postgres_engine.connect() as conn:
-        query = """
-        SELECT * FROM propeiredb.missing_geo_encoded_addresses
+    assert isinstance(batch_size, int), "Batch size must be an integer"
+    assert batch_size > 0, "Batch size must be greater than 0"
+
+
+    with postgres_engine as conn:
+        query = f"""
+        SELECT * FROM propeiredb.missing_geo_encoded_addresses LIMIT {batch_size};
         """
         df = pd.read_sql(query, conn)
 
     return df
+
+# -----------------------------------------------------------------------------
+# Transformation
+# -----------------------------------------------------------------------------
+
+
+def get_encoded_addresses(
+    df: pd.DataFrame,
+    client: googlemaps.Client,
+    region: Dict[str, Polygon]
+) -> List[GeoEncodedAddress]:
+    """
+    Takes addressses from the dataframe and encodes them using the googlemaps client
+    Returns a list of GeoEncodedAddress objects
+    """
+    assert "address" in df.columns, "Address column not found in dataframe"
+
+    df = df.to_dict(orient="records")
+    encoded_addresses = []
+    for i in df:
+        target_address = i["address"]
+
+        if 'ireland' not in target_address.lower():
+            target_address += ", Ireland"
+
+        geo_encoded_address = encode_address(target_address, client)
+        geo_encoded_address.input_address = i["address"]
+        geo_encoded_address.address_hash = i["address_hash"]
+        geo_encoded_address.region = assign_region(geo_encoded_address.lon, geo_encoded_address.lat, region)
+        encoded_addresses.append(geo_encoded_address)
+
+    return encoded_addresses
+
+# -----------------------------------------------------------------------------
+# Upload
+# -----------------------------------------------------------------------------
+
+
+def encode_and_upload_missing_addresses(
+    postgres_engine: PostgresConnection,
+    client: googlemaps.Client,
+    region: Dict[str, Polygon] = generate_region_points(DUBLIN_GEOJSON),
+    batch_size: int = 40_000,
+    schema_name: str = "propeiredb",
+    table_name: str = "geo_encoding_lookup"
+) -> None:
+    """
+    Encodes and uploads missing addresses to the database
+    """
+    df = get_addresses_to_encode(postgres_engine, batch_size)
+    encoded_addresses = get_encoded_addresses(df, client, region)
+    encoded_addresses = pd.DataFrame(encoded_addresses)
+
+    with postgres_engine as conn:
+        upsert = PandaSqlPlus(conn)
+        upsert.upsert_dataframe(
+            df=encoded_addresses,
+            schema_name=schema_name,
+            table_name=table_name,
+            update_rows=True
+        )
+
+    logging.info(f"Uploaded {len(encoded_addresses)} addresses to the database")
+
+
 
 
 

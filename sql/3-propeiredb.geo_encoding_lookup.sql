@@ -9,14 +9,16 @@ CREATE TABLE IF NOT EXISTS "propeiredb".geo_encoding_lookup (
 );
 
 
-CREATE OR REPLACE view propeiredb.missing_geo_encoded_addresses as
+CREATE OR REPLACE view propeiredb.missing_geo_encoded_addresses as 
 select 
-    address_hash,
+    rr.address_hash,
     address,
     sale_date,
     county,
     province,
     postal_code
-from propeiredb.residential_register
-inner join propeiredb.geo_encoding_lookup on propeiredb.residential_register.address_hash = propeiredb.geo_encoding_lookup.address_hash
-where lat is null or lon is null;
+from propeiredb.residential_register as rr
+left join propeiredb.geo_encoding_lookup as lookup
+on rr.address_hash = lookup.address_hash
+where lookup.address_hash is null;
+

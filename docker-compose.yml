@@ -22,10 +22,14 @@ services:
   postgres:
     container_name: propeiredb-pgdb
     image: postgres:14.2-alpine
-    shm_size: "4gb"
     restart: unless-stopped
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
+    shm_size: '512mb'  # Adjust based on your needs
+    command:
+      -c 'max_connections=200'
+      -c 'shared_buffers=256MB'
+
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_USER: ${POSTGRES_USER:-admin}

@@ -19,3 +19,7 @@ run-pipeline:
 	@echo "Running pipeline..."
 	cd src && python3 cli.py run-pipeline
 
+.PHONY: run-geoencode
+run-geoencode:
+	@echo "Running geoencode..."
+	cd src && python3 cli.py geoencode-missing-addresses
