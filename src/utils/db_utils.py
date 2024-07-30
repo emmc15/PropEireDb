@@ -112,7 +112,7 @@ def set_colour(percentage, colour="Viridis", greedy=True):
     for j in range(0, len(colors) - 1):
         # checks if value is between bands
         if percentage > colors[j][0] and percentage <= colors[j + 1][0]:
-            if greedy == True:
+            if greedy is True:
                 # Difference between bands
                 diff_lower = percentage - colors[j][0]
                 diff_higher = colors[j + 1][0]
@@ -121,7 +121,7 @@ def set_colour(percentage, colour="Viridis", greedy=True):
                     return colors[j + 1][1]
                 else:
                     return colors[j][1]
-            elif greedy == False:
+            elif greedy is False:
                 return colors[j][1]
 
 

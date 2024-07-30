@@ -2,9 +2,6 @@
 Returns the Database Connections Objects as defined in the .config.ini
 """
 import logging
-from collections.abc import Iterable as IterableClass
-import os
-from typing import Iterable, Union
 
 from redis import StrictRedis
 from sqlalchemy import create_engine
@@ -51,7 +48,6 @@ def create_postgres_sql_connection(dsn: str) -> PostgresConnection:
     return postgres_connection
 
 
-
 def create_redis_connection(dsn: str) -> StrictRedis:
     """
     [summary]
@@ -64,6 +60,6 @@ def create_redis_connection(dsn: str) -> StrictRedis:
         Redis: [description]
     """
     # Read in config Connection
-    
+
     redis_connection = StrictRedis(dsn)
     return redis_connection

@@ -1,4 +1,4 @@
-\c propeiredb;
+\c property_register;
 CREATE OR REPLACE VIEW propeiredb.residential_register_dublin_mapped AS
 SELECT joined.*
 FROM (

@@ -1,6 +1,7 @@
 """
     @about: Convience wrapper allowing extended control of pandas upload to a database
 """
+import os
 import logging
 from typing import Dict, List, Any
 from concurrent.futures import ThreadPoolExecutor
@@ -35,7 +36,7 @@ class PandaSqlPlus:
     Object used to have finer control of uploading data from sql to pandas
     """
 
-    def __init__(self, sql_engine: str, threads: int = 2):
+    def __init__(self, sql_engine: str, threads: int = os.cpu_count() * 2) -> None:
         self.connection = sql_engine
         self.threads = threads
 
@@ -122,7 +123,6 @@ class PandaSqlPlus:
         return data
 
     def _validate_columns_match_table(self, columns: List[str], schema_name: str, table_name: str) -> bool:
-
         data = self.pull_table_details(schema_name, table_name)
         column_names = map(lambda x: x.get("column_name"), data)
         column_names = list(column_names)
@@ -232,7 +232,6 @@ class PandaSqlPlus:
             for row in data:
                 cursor.execute(query, row)
 
-
     def upsert_dataframe(self, df: pd.DataFrame, schema_name: str, table_name: str, update_rows: bool = True) -> None:
         """
         Upserts Pandas DataFrame to postrgres database, handles both updating rows or ignoring if contraint is already met.
@@ -272,9 +271,6 @@ class PandaSqlPlus:
                 future.result()
 
         return None
-
-
-
 
 
 if __name__ == "__main__":

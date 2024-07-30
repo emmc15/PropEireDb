@@ -11,6 +11,7 @@ from models.input_model import InputModel
 import typing
 from sqlalchemy import text
 
+
 class DataModel(object):
     """
     Object Generates the data for various graphs by a dictionary input
@@ -79,8 +80,8 @@ class DataModel(object):
         SELECT
             {agg_func}(price)
         from {self.main_data_table}
-        where sale_date between '{self.start_date}' 
-        and '{self.end_date}' 
+        where sale_date between '{self.start_date}'
+        and '{self.end_date}'
         and {self.grouping_column} in ({self.area_choices});
         """
 
@@ -90,7 +91,7 @@ class DataModel(object):
         """
         For use with the bar chart option to group by year. This gives a total value for region choices by year on aggregate
 
-        
+
         Data is pulled from the aggregated table using imported json input:
             regions = (Province, County, Dublin Area)
             Choice = corresponding areas in regions
@@ -130,9 +131,15 @@ class DataModel(object):
 
         Returns:
             pd.DataFrame: _description_
-        """        
+        """
 
-        query = f"SELECT * FROM {self.main_data_table} WHERE sale_date between '{self.start_date}' and '{self.end_date}' and {self.grouping_column} in ({self.area_choices});"
+        query = f"""
+            SELECT
+                *
+            FROM {self.main_data_table}
+            WHERE sale_date between '{self.start_date}' and '{self.end_date}'
+            and {self.grouping_column} in ({self.area_choices});
+        """
 
         return pd.read_sql(text(query), con=self.engine.connect()).sort_values(by="period")
 
@@ -145,18 +152,36 @@ class DataModel(object):
 
         Returns:
             pd.DataFrame: _description_
-        """        
-        
+        """
+
         data_source = "propeiredb.{}_agg_data".format(self.grouping_column)
 
         sub_query = f"select * from {data_source} where period in ({self.period_choices}) and {self.grouping_column} in ({self.area_choices})"
         # sub_query=sub_query.format(data_source, periods, column, choice)
 
-        if grouping == None:
-            query = f"SELECT {self.grouping_column}, round(sum(total_value),2) as total_value, round(avg(avg_price),2) as avg_price, round(sum(num_of_sales),2) as num_of_sales from ({sub_query}) as sub group by {self.grouping_column}"
+        if grouping is None:
+            query = f"""
+                SELECT
+                    {self.grouping_column}
+                    , round(sum(total_value),2) as total_value
+                    , round(avg(avg_price),2) as avg_price
+                    , round(sum(num_of_sales),2) as num_of_sales
+                from ({sub_query}) as sub
+                group by {self.grouping_column}
+            """
 
         else:
-            query = f"SELECT {grouping}, {self.grouping_column},round(sum(total_value),2) as total_value, round(avg(avg_price),2) as avg_price, round(sum(num_of_sales),2) as num_of_sales from ({sub_query}) as sub group by {grouping}, {self.grouping_column} order by {grouping}"
+            query = f"""
+                SELECT
+                    {grouping}
+                    , {self.grouping_column}
+                    ,round(sum(total_value),2) as total_value
+                    , round(avg(avg_price),2) as avg_price
+                    , round(sum(num_of_sales),2) as num_of_sales
+                from ({sub_query}) as sub
+                group by {grouping}, {self.grouping_column}
+                order by {grouping}
+            """
 
         # print(f"pulled_grouped_data: {query}")
         return pd.read_sql(text(query), con=self.engine.connect())
@@ -166,7 +191,7 @@ class DataModel(object):
         gives a list of all the market share based on region, choices, and year-periods
         NOTE: This is relative market share
 
-        
+
         Parameters:
         -----------
             regions = (Province, County, Dublin Area)
@@ -179,7 +204,7 @@ class DataModel(object):
             pd.DataFrame: list of market share by area for the selection periods
             columns=['total_value', region_column, 'avg_price','market_share', 'num_of_sales']
 
-        """        
+        """
         # Total value of the region selected over the selected period
         data = self.pull_grouped_data()
 
@@ -199,7 +224,13 @@ class DataModel(object):
         """
 
         # Total value of all areas for the period
-        total_value = f"SELECT sum(total_value) as total_value from propeiredb.{self.grouping_column}_agg_data WHERE period in ({self.period_choices}) and {self.grouping_column} is not null"
+        total_value = f"""
+            SELECT
+                sum(total_value) as total_value
+            from propeiredb.{self.grouping_column}_agg_data
+            WHERE period in ({self.period_choices})
+                and {self.grouping_column} is not null
+        """
         total_value = float(pd.read_sql(text(total_value), con=self.engine.connect())["total_value"])
 
         # pulls in the total select value

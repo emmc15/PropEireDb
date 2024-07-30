@@ -1,4 +1,4 @@
-import multiprocessing
+import multiprocessing  # noqa
 
 #
 # Server socket
@@ -206,7 +206,7 @@ def when_ready(server):
 def worker_int(worker):
     worker.log.info("worker received INT or QUIT signal")
 
-    ## get traceback info
+    # get traceback info
     import sys
     import threading
     import traceback

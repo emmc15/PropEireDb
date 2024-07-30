@@ -1,4 +1,4 @@
-\c propeiredb;
+\c property_register;
 CREATE TABLE IF NOT EXISTS "propeiredb".residential_register (
     address_hash TEXT NOT NULL,
     address TEXT NOT NULL,

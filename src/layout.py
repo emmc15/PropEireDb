@@ -8,18 +8,24 @@ from dash import html
 
 from server_config import application
 
-#### CSS Theme Variables ####
-setting = "dark"
+# -----------------------------------------------------------------------------
+# CSS Theme Variables
+# -----------------------------------------------------------------------------
+setting = "light"
 
 if setting == "light":
-    nav_bar_css = "navbar navbar-expand-lg navbar-light bg-primary"
-    summary_cards_css = "card text-white bg-secondary mb-3"
+    nav_bar_css = "navbar navbar-expand-lg navbar-dark bg-dark container-fluid no-padding"
+    div_main_css = "card text-white bg-primary mb-3"
+    summary_cards_css = "card text-white bg-success mb-3"
 else:
-    nav_bar_css = "navbar navbar-expand-lg navbar-dark bg-dark"
+    nav_bar_css = "navbar navbar-expand-lg navbar-dark bg-dark container-fluid no-padding"
     div_main_css = "card text-white bg-primary mb-3"
     summary_cards_css = "card text-white bg-success mb-3"
 
-#### Setting the variables #####
+
+# -----------------------------------------------------------------------------
+# Initialisation
+# -----------------------------------------------------------------------------
 
 # List for charts
 chart = ["Line Chart", "Violin Chart", "Bar Chart"]
@@ -33,7 +39,6 @@ for i in chart:
         charts.append("Violin Chart - Price")
 
 
-#### Navbar Simple ####
 navbar_simple = dbc.NavbarSimple(
     children=[
         dbc.DropdownMenu(
@@ -80,9 +85,6 @@ dropdown = dbc.DropdownMenu(
     right=True,
 )
 
-
-#### Navbar Complex ####
-# Base Navbar insert layout
 base_navbar = dbc.Container(
     [
         # Sets the branding and the title
@@ -106,10 +108,9 @@ base_navbar = dbc.Container(
 # Final creation of the nav bar
 navbar_complex = dbc.Navbar(base_navbar, id="nav-bar", className=nav_bar_css, color="green")
 
-
-#### Region Selection #####
-
-# Region Choice
+# -----------------------------------------------------------------------------
+# Regions
+# -----------------------------------------------------------------------------
 region_choice = html.Div(
     [
         html.H6("Select Map Type"),
@@ -130,8 +131,6 @@ region_choice = html.Div(
     style={"margin-left": "50px"},
 )
 
-#### Area Choice ####
-# This selects the area based on the region choice selection
 area_choice = html.Div(
     [
         # Area Choice Dropdown
@@ -142,7 +141,7 @@ area_choice = html.Div(
     style={"margin-left": "50px"},
 )
 
-#### Invert Area Selection ####
+
 invert_choice = html.Div(
     [
         dcc.Checklist(
@@ -154,8 +153,6 @@ invert_choice = html.Div(
     ]
 )
 
-##### Year Slider ####
-# Select the year via slider
 year_slider = html.Div(
     [
         html.H6("Year Slider"),
@@ -164,9 +161,6 @@ year_slider = html.Div(
     style={"margin-left": "50px", "margin-right": "50px", "margin-bottom": "50px"},
 )
 
-#### Period Slider ####
-
-# Select the periods via slider
 period_slider = html.Div(
     [
         html.H6("Month Slider"),
@@ -209,9 +203,6 @@ date_picker = html.Div(
     [html.H6("Date Range"), date_picker], style={"margin-left": "50px", "margin-right": "50px", "margin-bottom": "50px"}
 )
 
-#### Update Map Button ####
-
-# Button Div
 update_button = html.Div(
     [
         # Adds the button for updating the map
@@ -219,8 +210,6 @@ update_button = html.Div(
     ],
     style={"width": "100%", "display": "flex", "align-items": "center", "justify-content": "center"},
 )
-
-#### Input Area ####
 
 # Formats the html in single div with breaks between inputs
 input_column = html.Div(
@@ -231,28 +220,10 @@ input_column = html.Div(
         invert_choice,
         html.Br(),
         date_picker,
-        # html.Br(),
-        # year_slider,
-        # html.Br(),
-        # period_slider,
-        # update_button,
         html.Br(),
     ]
 )
 
-# Converts to column and sets the widths for reformatting on different screens
-# input_column = dbc.Col([input_column], width=2, md=2, lg=2, xl=2, sm=12, xs=12)
-
-#### Map Column ####
-# Map Column
-# map_column=dbc.Col(
-#    #Loading component to show user map is loading in long wait times
-#    dcc.Loading(id='map-loading',
-#        children=[dcc.Graph(id='mapbox', style={"width": "75%", 'height':'100%', "display": "inline-block"})],
-#        type='cirlce',
-#        color='#18BC9C'),
-#    width=6, md=6, lg=6,xl=6,sm=12,xs=12
-# )
 
 # Used below instead as issue with loading object and hover data
 # NOTE: https://community.plot.ly/t/choroplethmapbox-hover-problem/33218
@@ -272,9 +243,10 @@ new_map_column = dbc.Col(
     xs=12,
 )
 
+# -----------------------------------------------------------------------------
+# Stacked High Level metrics
+# -----------------------------------------------------------------------------
 
-#### Stacked High Level metrics ####
-# Stacked Values
 stacked_values = dbc.Col(
     [
         # Total Value
@@ -317,9 +289,9 @@ stacked_values = dbc.Col(
     xs=12,
 )
 
-#### First Row ####
+
 annoying_alert = dbc.Alert(
-    "Data shown has missing entries and inaccuarcies, to help improve the system and keep it up to date and free from ads, please consider donating at https://www.buymeacoffee.com/propeiredb",
+    "Data shown has missing entries and inaccuarcies, to help improve the system and keep it up to date and free from ads, please consider donating at https://www.buymeacoffee.com/propeiredb",  # noqa: E501
     id="warning-alert",
     dismissable=True,
     is_open=False,
@@ -327,9 +299,6 @@ annoying_alert = dbc.Alert(
     class_name="alert alert-dismissable alert-danger",
 )
 first_row = html.Div([annoying_alert, html.Br(), dbc.Row([new_map_column, stacked_values], justify="center")])
-
-#### First Graph Area ####
-# top left graph and dropdown
 first_graph = dbc.Col(
     [
         # Sets the dropdown for the selection of what type of graph
@@ -362,7 +331,6 @@ first_graph = dbc.Col(
     xs=12,
 )
 
-#### Second Graph Area #####
 second_graph = dbc.Col(
     [
         dcc.Dropdown(
@@ -392,10 +360,8 @@ second_graph = dbc.Col(
     xs=12,
 )
 
-#### Second Row ####
 second_row = html.Div([dbc.Row([first_graph, second_graph], justify="around")])
 
-#### Bottom Graph ####
 bottom_graph = dbc.Col(
     [
         # Dropdown for choicing the graph
@@ -422,7 +388,6 @@ bottom_graph = dbc.Col(
     ]
 )
 
-#### Third Row ####
 third_row = html.Div([html.Br(), dbc.Row([bottom_graph])])
 
 # -----------------------------------------------------------------------------
@@ -461,27 +426,34 @@ buymeacoffee_image = dbc.Container(
     ),
 )
 
-#### Cached Div ####
+# Cached Div
 geojson_div = html.Div(id="cached-geojson", style={"display": "none"})
 inputs_div = html.Div(id="cached-inputs", style={"display": "none"})
 
-
-#### Layout ####
+# ------------------------------------------------------------------------
+# Layout
+# -----------------------------------------------------------------------------
 navbar = navbar_complex
 footer = html.Div([html.Br(), buymeacoffee_image])
-layout = html.Div(
+layout = dbc.Container(
     [
-        navbar,
+        # navbar,
         first_row,
         second_row,
+        html.Br(),
+        html.Br(),
         third_row,
+        html.Br(),
         footer,
         geojson_div,
         inputs_div,
         dcc.Store(id="track-annoying-alert", storage_type="memory"),
-    ]
+    ],
+    style={"background-color": "#111111"} if setting == "dark" else None,
+    fluid=True,
 )
+layout = html.Div([navbar, layout])
 
-#### Insert into Server ####
-application.layout = layout  # Assigns the layout
+# Apply to WSGI server
+application.layout = layout
 application.title = "PropEireDB"

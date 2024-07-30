@@ -4,6 +4,7 @@ import pandas as pd
 import typing
 from sqlalchemy import text
 
+
 class InputModel(object):
     """
     Cleanses the input from the user to a more queryable format for feeding into the data model
@@ -24,7 +25,7 @@ class InputModel(object):
             json_input (typing.Dict[str, typing.Any]):key values found 'cached-inputs' div and call back in callbacks and layout
 
         Returns:
-            typing.Dict[str, typing.Any]: with the same key values bar the invert with more queryable data format for inputs    
+            typing.Dict[str, typing.Any]: with the same key values bar the invert with more queryable data format for inputs
         """
         # Sets the invert attribute
         try:
@@ -70,7 +71,7 @@ class InputModel(object):
 
             # Pull the data from the db
             with engine.begin() as conn:
-              data = pd.read_sql_query(sql=text(query), con=conn)
+                data = pd.read_sql_query(sql=text(query), con=conn)
 
             data = list(data[column_to_match])
             area_options[i] = data
@@ -85,10 +86,9 @@ class InputModel(object):
 
         Returns:
             _type_: _description_
-        """        
+        """
         # Catches to see if invert to make choices inclusive or exclusive
         if isinstance(invert, list) and len(invert) == 1 and invert[0] is not None:
-
             # converts invert to bool if not already
             if isinstance(invert, list) and len(invert) >= 1:
                 if True in invert:
@@ -141,7 +141,7 @@ class InputModel(object):
             value = list_of_values
 
         # Checks whether to inver list
-        if self.invert == True:
+        if self.invert is True:
             # Uses set to get unique list and then separate via - and convert back to list
             value = list(set(list_of_values) - set(value))
 
@@ -197,18 +197,14 @@ class InputModel(object):
         return choices
 
 
-#### tests ####
-# model=InputModel()
-# inputs={
-#    'region':'Dublin',
-#    'area': 'All',
-#    'year':[2010,2018],
-#    'months': [0,6],
-#    'invert': [False]
-# }
-#
-#
-# model.cleanse_input(inputs)
 
 if __name__ == "__main__":
-    pass
+    model = InputModel()
+    inputs = {
+        "region": "Dublin",
+        "area": "All",
+        "year": [2010, 2018],
+        "months": [0, 6],
+        "invert": [False],
+    }
+    model.cleanse_input(inputs)
