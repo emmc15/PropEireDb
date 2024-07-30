@@ -8,7 +8,7 @@ class GraphModel(object):
     Object for returning the values for the various datarequest
     """
 
-    def __init__(self, template: str="plotly"):
+    def __init__(self, template: str = "plotly"):
         self.template = template
 
     #### Backbone of GraphModel ####
@@ -56,7 +56,7 @@ class GraphModel(object):
                 zoom=zoom,
                 animation_frame="period",
                 animation_group="price",
-                template=self.template
+                template=self.template,
             )
 
             # Slows down the graph NOTE: https://community.plot.ly/t/how-to-slow-down-animation-in-plotly-express/31309/5
@@ -71,7 +71,7 @@ class GraphModel(object):
                 color_continuous_scale=px.colors.sequential.Viridis,
                 size_max=100,
                 zoom=zoom,
-                template=self.template
+                template=self.template,
             )
             fig.update_mapboxes(style="open-street-map")
             fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
@@ -96,7 +96,7 @@ class GraphModel(object):
                 color=colour,
                 height=350,
                 labels={"period": "Period", "total_value": "Total Value", colour: colour.title()},
-                template=self.template
+                template=self.template,
             )
         elif chart == "Line Chart - Average Price":
             graph = px.line(
@@ -106,7 +106,7 @@ class GraphModel(object):
                 color=colour,
                 height=350,
                 labels={"period": "Period", "avg_price": "Average Price", colour: colour.title()},
-                template=self.template
+                template=self.template,
             )
         elif chart == "Line Chart - Volume of Sales":
             graph = px.line(
@@ -116,7 +116,7 @@ class GraphModel(object):
                 color=colour,
                 height=350,
                 labels={"period": "Period", "num_of_sales": "Volume of Sales", colour: colour.title()},
-                template=self.template
+                template=self.template,
             )
         return graph
 
@@ -131,7 +131,9 @@ class GraphModel(object):
 
         # Violin Charts
         if chart == "Violin Chart - Price":
-            graph = px.violin(data, y="price", color=colour, height=350, box=True, labels={"price": "Price"}, template=self.template)
+            graph = px.violin(
+                data, y="price", color=colour, height=350, box=True, labels={"price": "Price"}, template=self.template
+            )
 
         return graph
 
@@ -184,15 +186,21 @@ class GraphModel(object):
         if chart == "Bar Chart - Average Price":
             data = data.sort_values("avg_price")
             labels["avg_price"] = "Average Price"
-            graph = px.bar(data, x=grouping, y="avg_price", color=colour, height=350, labels=labels, template=self.template)
+            graph = px.bar(
+                data, x=grouping, y="avg_price", color=colour, height=350, labels=labels, template=self.template
+            )
         elif chart == "Bar Chart - Total Value":
             data = data.sort_values("total_value")
             labels["total_value"] = "Total Value"
-            graph = px.bar(data, x=grouping, y="total_value", color=colour, height=350, labels=labels, template=self.template)
+            graph = px.bar(
+                data, x=grouping, y="total_value", color=colour, height=350, labels=labels, template=self.template
+            )
         elif chart == "Bar Chart - Volume of Sales":
             data = data.sort_values("num_of_sales")
             labels["num_of_sales"] = "Volume of Sales"
-            graph = px.bar(data, x=grouping, y="num_of_sales", color=colour, height=350, labels=labels, template=self.template)
+            graph = px.bar(
+                data, x=grouping, y="num_of_sales", color=colour, height=350, labels=labels, template=self.template
+            )
         return graph
 
     def choropleth_map(self):
@@ -239,7 +247,7 @@ class GraphModel(object):
             color="total_value",
             featureidkey=geojson_key,
             color_continuous_scale="Viridis",
-            mapbox_style="carto-positron" if 'dark' not in self.template else "carto-darkmatter",
+            mapbox_style="carto-positron" if "dark" not in self.template else "carto-darkmatter",
             zoom=zoom,
             center={"lat": lats, "lon": lons},
             opacity=0.8,
@@ -250,7 +258,7 @@ class GraphModel(object):
                 "market_share": "Market Share",
                 region: region.title(),
             },
-            template=self.template
+            template=self.template,
         )
         fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
         return fig

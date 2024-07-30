@@ -28,7 +28,7 @@ def chunk_list(input_list: List[Any], chunk_size: int) -> List[List[Any]]:
     Returns:
         list: A list of sub-lists, each containing 'chunk_size' number of elements.
     """
-    return [input_list[i:i + chunk_size] for i in range(0, len(input_list), chunk_size)]
+    return [input_list[i : i + chunk_size] for i in range(0, len(input_list), chunk_size)]
 
 
 class PandaSqlPlus:
@@ -123,7 +123,6 @@ class PandaSqlPlus:
         return data
 
     def _validate_columns_match_table(self, columns: List[str], schema_name: str, table_name: str) -> bool:
-
         data = self.pull_table_details(schema_name, table_name)
         column_names = map(lambda x: x.get("column_name"), data)
         column_names = list(column_names)
@@ -233,7 +232,6 @@ class PandaSqlPlus:
             for row in data:
                 cursor.execute(query, row)
 
-
     def upsert_dataframe(self, df: pd.DataFrame, schema_name: str, table_name: str, update_rows: bool = True) -> None:
         """
         Upserts Pandas DataFrame to postrgres database, handles both updating rows or ignoring if contraint is already met.
@@ -273,9 +271,6 @@ class PandaSqlPlus:
                 future.result()
 
         return None
-
-
-
 
 
 if __name__ == "__main__":

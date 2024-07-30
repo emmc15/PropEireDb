@@ -9,7 +9,7 @@ from dash import html
 from server_config import application
 
 # -----------------------------------------------------------------------------
-# CSS Theme Variables 
+# CSS Theme Variables
 # -----------------------------------------------------------------------------
 setting = "light"
 
@@ -232,7 +232,6 @@ input_column = html.Div(
         invert_choice,
         html.Br(),
         date_picker,
-
         html.Br(),
     ]
 )
@@ -466,8 +465,8 @@ layout = dbc.Container(
         geojson_div,
         inputs_div,
         dcc.Store(id="track-annoying-alert", storage_type="memory"),
-    ], 
-    style={"background-color": "#111111"} if setting == 'dark' else None,
+    ],
+    style={"background-color": "#111111"} if setting == "dark" else None,
     fluid=True,
 )
 layout = html.Div([navbar, layout])

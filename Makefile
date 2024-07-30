@@ -23,3 +23,8 @@ run-pipeline:
 run-geoencode:
 	@echo "Running geoencode..."
 	cd src && python3 cli.py geoencode-missing-addresses
+
+.PHONY: lint
+lint:
+	@echo "Linting all services..."
+	poetry run flake8 src

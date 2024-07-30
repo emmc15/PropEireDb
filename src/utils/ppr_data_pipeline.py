@@ -155,7 +155,6 @@ def pull_number(input_text: str) -> Union[str, None]:
     """
 
     if isinstance(input_text, str):
-
         t = re.search(r"\d+", input_text)
         if t is not None:
             return t.group(0)
@@ -193,7 +192,6 @@ def process_downloaded_data(ppr_file_path: str) -> pd.DataFrame:
     ]
 
     new_data.columns = columns
-
 
     # Annoymous function ran through apply to clean up the price to cast as numeric
     new_data["price"] = new_data["price"].apply(lambda x: x.strip("\x80").replace(",", "").lower())

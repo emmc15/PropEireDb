@@ -62,6 +62,7 @@ for i in ["county", "province", "dublin_region"]:
 # Config
 # -----------------------------------------------------------------------------
 
+
 # Drives the second dropdown by the available options from the first province one
 @application.callback(Output("region-choice-dropdown", "options"), [Input("region-dropdown", "value")])
 @CACHE.memoize(timeout=6000)

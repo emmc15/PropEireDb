@@ -20,15 +20,13 @@ from .geojson_map_cleanse import DUBLIN_GEOJSON
 # Geo Encoding Functions
 # -----------------------------------------------------------------------------
 @dataclasses.dataclass
-class GeoEncodedAddress():
+class GeoEncodedAddress:
     input_address: str
     output_address: str
     lat: float
     lon: float
     address_hash: str | None = None
     region: str | None = None
-
-
 
 
 def encode_address(address: str, client: googlemaps.Client) -> GeoEncodedAddress:
@@ -107,7 +105,6 @@ def get_addresses_to_encode(postgres_engine: PostgresConnection, batch_size: int
     assert isinstance(batch_size, int), "Batch size must be an integer"
     assert batch_size > 0, "Batch size must be greater than 0"
 
-
     with postgres_engine as conn:
         query = f"""
         SELECT * FROM propeiredb.missing_geo_encoded_addresses LIMIT {batch_size};
@@ -116,15 +113,14 @@ def get_addresses_to_encode(postgres_engine: PostgresConnection, batch_size: int
 
     return df
 
+
 # -----------------------------------------------------------------------------
 # Transformation
 # -----------------------------------------------------------------------------
 
 
 def get_encoded_addresses(
-    df: pd.DataFrame,
-    client: googlemaps.Client,
-    region: Dict[str, Polygon]
+    df: pd.DataFrame, client: googlemaps.Client, region: Dict[str, Polygon]
 ) -> List[GeoEncodedAddress]:
     """
     Takes addressses from the dataframe and encodes them using the googlemaps client
@@ -137,7 +133,7 @@ def get_encoded_addresses(
     for i in df:
         target_address = i["address"]
 
-        if 'ireland' not in target_address.lower():
+        if "ireland" not in target_address.lower():
             target_address += ", Ireland"
 
         geo_encoded_address = encode_address(target_address, client)
@@ -147,6 +143,7 @@ def get_encoded_addresses(
         encoded_addresses.append(geo_encoded_address)
 
     return encoded_addresses
+
 
 # -----------------------------------------------------------------------------
 # Upload
@@ -159,28 +156,23 @@ def encode_and_upload_missing_addresses(
     region: Dict[str, Polygon] = generate_region_points(DUBLIN_GEOJSON),
     batch_size: int = 40_000,
     schema_name: str = "propeiredb",
-    table_name: str = "geo_encoding_lookup"
+    table_name: str = "geo_encoding_lookup",
 ) -> None:
     """
     Encodes and uploads missing addresses to the database
     """
+    logging.info("Starting to encode and upload missing addresses")
     df = get_addresses_to_encode(postgres_engine, batch_size)
+    logging.info(f"Extracted {len(df)} addresses to encode")
     encoded_addresses = get_encoded_addresses(df, client, region)
+    logging.info(f"Encoded {len(encoded_addresses)} addresses")
     encoded_addresses = pd.DataFrame(encoded_addresses)
 
     with postgres_engine as conn:
         upsert = PandaSqlPlus(conn)
-        upsert.upsert_dataframe(
-            df=encoded_addresses,
-            schema_name=schema_name,
-            table_name=table_name,
-            update_rows=True
-        )
+        upsert.upsert_dataframe(df=encoded_addresses, schema_name=schema_name, table_name=table_name, update_rows=True)
 
     logging.info(f"Uploaded {len(encoded_addresses)} addresses to the database")
-
-
-
 
 
 if __name__ == "__main__":

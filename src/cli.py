@@ -35,6 +35,7 @@ def propeiredb_cli():
     """
     pass
 
+
 # -----------------------------------------------------------------------------
 # Extract data from PPR
 # -----------------------------------------------------------------------------
@@ -69,7 +70,6 @@ def run_pipeline(property_type: str, period: str, force_build: bool = False) -> 
         logging.warning("could not parse file as downloading failed")
         return None
 
-
     df = process_downloaded_data(file_path)
 
     db_connection = db_con.create_postgres_sql_connection(os.getenv("POSTGRES_DSN"))
@@ -80,6 +80,7 @@ def run_pipeline(property_type: str, period: str, force_build: bool = False) -> 
 # -----------------------------------------------------------------------------
 # Backfill Previously mapped data to geo_encode_lookup table
 # -----------------------------------------------------------------------------
+
 
 @propeiredb_cli.command()
 @click.option("--batch-size", default=100)
