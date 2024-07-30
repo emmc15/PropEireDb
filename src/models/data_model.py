@@ -80,8 +80,8 @@ class DataModel(object):
         SELECT
             {agg_func}(price)
         from {self.main_data_table}
-        where sale_date between '{self.start_date}' 
-        and '{self.end_date}' 
+        where sale_date between '{self.start_date}'
+        and '{self.end_date}'
         and {self.grouping_column} in ({self.area_choices});
         """
 
@@ -133,7 +133,13 @@ class DataModel(object):
             pd.DataFrame: _description_
         """
 
-        query = f"SELECT * FROM {self.main_data_table} WHERE sale_date between '{self.start_date}' and '{self.end_date}' and {self.grouping_column} in ({self.area_choices});"
+        query = f"""
+            SELECT
+                *
+            FROM {self.main_data_table}
+            WHERE sale_date between '{self.start_date}' and '{self.end_date}'
+            and {self.grouping_column} in ({self.area_choices});
+        """
 
         return pd.read_sql(text(query), con=self.engine.connect()).sort_values(by="period")
 
@@ -153,11 +159,29 @@ class DataModel(object):
         sub_query = f"select * from {data_source} where period in ({self.period_choices}) and {self.grouping_column} in ({self.area_choices})"
         # sub_query=sub_query.format(data_source, periods, column, choice)
 
-        if grouping == None:
-            query = f"SELECT {self.grouping_column}, round(sum(total_value),2) as total_value, round(avg(avg_price),2) as avg_price, round(sum(num_of_sales),2) as num_of_sales from ({sub_query}) as sub group by {self.grouping_column}"
+        if grouping is None:
+            query = f"""
+                SELECT
+                    {self.grouping_column}
+                    , round(sum(total_value),2) as total_value
+                    , round(avg(avg_price),2) as avg_price
+                    , round(sum(num_of_sales),2) as num_of_sales
+                from ({sub_query}) as sub
+                group by {self.grouping_column}
+            """
 
         else:
-            query = f"SELECT {grouping}, {self.grouping_column},round(sum(total_value),2) as total_value, round(avg(avg_price),2) as avg_price, round(sum(num_of_sales),2) as num_of_sales from ({sub_query}) as sub group by {grouping}, {self.grouping_column} order by {grouping}"
+            query = f"""
+                SELECT
+                    {grouping}
+                    , {self.grouping_column}
+                    ,round(sum(total_value),2) as total_value
+                    , round(avg(avg_price),2) as avg_price
+                    , round(sum(num_of_sales),2) as num_of_sales
+                from ({sub_query}) as sub
+                group by {grouping}, {self.grouping_column}
+                order by {grouping}
+            """
 
         # print(f"pulled_grouped_data: {query}")
         return pd.read_sql(text(query), con=self.engine.connect())
@@ -200,7 +224,13 @@ class DataModel(object):
         """
 
         # Total value of all areas for the period
-        total_value = f"SELECT sum(total_value) as total_value from propeiredb.{self.grouping_column}_agg_data WHERE period in ({self.period_choices}) and {self.grouping_column} is not null"
+        total_value = f"""
+            SELECT
+                sum(total_value) as total_value
+            from propeiredb.{self.grouping_column}_agg_data
+            WHERE period in ({self.period_choices})
+                and {self.grouping_column} is not null
+        """
         total_value = float(pd.read_sql(text(total_value), con=self.engine.connect())["total_value"])
 
         # pulls in the total select value

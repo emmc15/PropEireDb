@@ -141,7 +141,7 @@ class InputModel(object):
             value = list_of_values
 
         # Checks whether to inver list
-        if self.invert == True:
+        if self.invert is True:
             # Uses set to get unique list and then separate via - and convert back to list
             value = list(set(list_of_values) - set(value))
 
@@ -197,18 +197,14 @@ class InputModel(object):
         return choices
 
 
-#### tests ####
-# model=InputModel()
-# inputs={
-#    'region':'Dublin',
-#    'area': 'All',
-#    'year':[2010,2018],
-#    'months': [0,6],
-#    'invert': [False]
-# }
-#
-#
-# model.cleanse_input(inputs)
 
 if __name__ == "__main__":
-    pass
+    model = InputModel()
+    inputs = {
+        "region": "Dublin",
+        "area": "All",
+        "year": [2010, 2018],
+        "months": [0, 6],
+        "invert": [False],
+    }
+    model.cleanse_input(inputs)

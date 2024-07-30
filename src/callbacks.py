@@ -10,13 +10,16 @@ import plotly.graph_objs as go
 from sqlalchemy import text
 
 
-from layout import layout
+from layout import layout  # noqa
 from models.data_model import DataModel
 from models.graph_model import GraphModel
 from models.input_model import InputModel
 from server_config import application, PG_ALCHEMY_CONNECTION, REDIS_TIMEOUT, CACHE
 
-#### Model Creation for Startup ####
+# -----------------------------------------------------------------------------
+# Model Creation for Startup
+# -----------------------------------------------------------------------------
+
 inputs = {
     "region": "Province",
     "area": "Dublin",

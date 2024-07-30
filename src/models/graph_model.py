@@ -11,14 +11,13 @@ class GraphModel(object):
     def __init__(self, template: str = "plotly"):
         self.template = template
 
-    #### Backbone of GraphModel ####
     def import_data_model(self, model):
         """
         imports the data model for use with the graphs
         """
         self.data_object = model
 
-    #### Utils ####
+    # Utils
     @staticmethod
     def human_format(num, round_to=2):
         """
@@ -37,7 +36,7 @@ class GraphModel(object):
             num = round(num / 1000.0, round_to)
         return "{:.{}f}{}".format(round(num, round_to), round_to, ["", "K", "M", "B", "T", "P"][magnitude])
 
-    #### Graphs ####
+    # Graphs
     def scatter_map(self, animation=False, zoom=10):
         """
         Creates an scatter map with plotly express for displaying all the points on the map that were encoded

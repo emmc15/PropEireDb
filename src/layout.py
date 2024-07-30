@@ -131,8 +131,6 @@ region_choice = html.Div(
     style={"margin-left": "50px"},
 )
 
-#### Area Choice ####
-# This selects the area based on the region choice selection
 area_choice = html.Div(
     [
         # Area Choice Dropdown
@@ -143,7 +141,7 @@ area_choice = html.Div(
     style={"margin-left": "50px"},
 )
 
-#### Invert Area Selection ####
+
 invert_choice = html.Div(
     [
         dcc.Checklist(
@@ -155,8 +153,6 @@ invert_choice = html.Div(
     ]
 )
 
-##### Year Slider ####
-# Select the year via slider
 year_slider = html.Div(
     [
         html.H6("Year Slider"),
@@ -165,9 +161,6 @@ year_slider = html.Div(
     style={"margin-left": "50px", "margin-right": "50px", "margin-bottom": "50px"},
 )
 
-#### Period Slider ####
-
-# Select the periods via slider
 period_slider = html.Div(
     [
         html.H6("Month Slider"),
@@ -210,9 +203,6 @@ date_picker = html.Div(
     [html.H6("Date Range"), date_picker], style={"margin-left": "50px", "margin-right": "50px", "margin-bottom": "50px"}
 )
 
-#### Update Map Button ####
-
-# Button Div
 update_button = html.Div(
     [
         # Adds the button for updating the map
@@ -220,8 +210,6 @@ update_button = html.Div(
     ],
     style={"width": "100%", "display": "flex", "align-items": "center", "justify-content": "center"},
 )
-
-#### Input Area ####
 
 # Formats the html in single div with breaks between inputs
 input_column = html.Div(
@@ -255,9 +243,10 @@ new_map_column = dbc.Col(
     xs=12,
 )
 
+# -----------------------------------------------------------------------------
+# Stacked High Level metrics
+# -----------------------------------------------------------------------------
 
-#### Stacked High Level metrics ####
-# Stacked Values
 stacked_values = dbc.Col(
     [
         # Total Value
@@ -300,9 +289,9 @@ stacked_values = dbc.Col(
     xs=12,
 )
 
-#### First Row ####
+
 annoying_alert = dbc.Alert(
-    "Data shown has missing entries and inaccuarcies, to help improve the system and keep it up to date and free from ads, please consider donating at https://www.buymeacoffee.com/propeiredb",
+    "Data shown has missing entries and inaccuarcies, to help improve the system and keep it up to date and free from ads, please consider donating at https://www.buymeacoffee.com/propeiredb",  # noqa: E501
     id="warning-alert",
     dismissable=True,
     is_open=False,
@@ -310,9 +299,6 @@ annoying_alert = dbc.Alert(
     class_name="alert alert-dismissable alert-danger",
 )
 first_row = html.Div([annoying_alert, html.Br(), dbc.Row([new_map_column, stacked_values], justify="center")])
-
-#### First Graph Area ####
-# top left graph and dropdown
 first_graph = dbc.Col(
     [
         # Sets the dropdown for the selection of what type of graph
@@ -345,7 +331,6 @@ first_graph = dbc.Col(
     xs=12,
 )
 
-#### Second Graph Area #####
 second_graph = dbc.Col(
     [
         dcc.Dropdown(
@@ -375,10 +360,8 @@ second_graph = dbc.Col(
     xs=12,
 )
 
-#### Second Row ####
 second_row = html.Div([dbc.Row([first_graph, second_graph], justify="around")])
 
-#### Bottom Graph ####
 bottom_graph = dbc.Col(
     [
         # Dropdown for choicing the graph
@@ -405,7 +388,6 @@ bottom_graph = dbc.Col(
     ]
 )
 
-#### Third Row ####
 third_row = html.Div([html.Br(), dbc.Row([bottom_graph])])
 
 # -----------------------------------------------------------------------------
@@ -444,12 +426,13 @@ buymeacoffee_image = dbc.Container(
     ),
 )
 
-#### Cached Div ####
+# Cached Div
 geojson_div = html.Div(id="cached-geojson", style={"display": "none"})
 inputs_div = html.Div(id="cached-inputs", style={"display": "none"})
 
-
-#### Layout ####
+# ------------------------------------------------------------------------
+# Layout
+# -----------------------------------------------------------------------------
 navbar = navbar_complex
 footer = html.Div([html.Br(), buymeacoffee_image])
 layout = dbc.Container(
@@ -471,6 +454,6 @@ layout = dbc.Container(
 )
 layout = html.Div([navbar, layout])
 
-#### Insert into Server ####
-application.layout = layout  # Assigns the layout
+# Apply to WSGI server
+application.layout = layout
 application.title = "PropEireDB"
