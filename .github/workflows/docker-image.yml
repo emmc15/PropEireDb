@@ -7,19 +7,12 @@ on:
     branches: ["main"]
 
 jobs:
-  build:
+  pubish:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag ghcr.io/emmc15/propeiredb:latest
-
-  pubish:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
       - name: Publish Docker image to Github Container Registry
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u emmc15 --password-stdin; docker push ghcr.io/emmc15/propeiredb:latest
