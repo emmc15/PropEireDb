@@ -6,8 +6,8 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    #entrypoint: cd src && gunicorn wsgi:server -b 8000
-    entrypoint: sleep infinity
+    entrypoint: make start
+    # entrypoint: sleep infinity
     restart: unless-stopped
     environment:
       POSTGRES_DSN: postgresql://${POSTGRES_USER:-admin}:${POSTGRES_PASSWORD:-password}@propeiredb-pgdb:5432/${POSTGRES_DB:-property_register}
@@ -29,10 +29,10 @@ services:
     command:
       -c 'max_connections=200'
       -c 'shared_buffers=256MB'
-
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_DB: ${POSTGRES_DB:-property_register}
     expose:
       - 5432
 
