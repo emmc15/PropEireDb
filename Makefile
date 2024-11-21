@@ -22,7 +22,7 @@ run-pipeline:
 .PHONY: run-geoencode
 run-geoencode:
 	@echo "Running geoencode..."
-	cd src && python3 cli.py geoencode-missing-addresses
+	cd src && python3 cli.py geoencode-missing-addresses --batch-size ${BATCH_SIZE:-100}
 
 .PHONY: lint
 lint:
