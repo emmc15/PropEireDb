@@ -10,6 +10,7 @@ import pandas as pd
 from psycopg2.extensions import connection as PostgresConnection
 from shapely.geometry.polygon import Polygon
 from shapely.geometry import Point
+from tqdm import tqdm
 
 from .db_utils import recursive_list_float_extractor
 from .pandas_upsert import PandaSqlPlus
@@ -130,13 +131,16 @@ def get_encoded_addresses(
 
     df = df.to_dict(orient="records")
     encoded_addresses = []
-    for i in df:
+    for i in tqdm(df, total=len(df), desc="Encoding Addresses", unit="address", leave=False):
         target_address = i["address"]
 
         if "ireland" not in target_address.lower():
             target_address += ", Ireland"
+        try:
+            geo_encoded_address = encode_address(target_address, client)
+        except ValueError:
+            continue
 
-        geo_encoded_address = encode_address(target_address, client)
         geo_encoded_address.input_address = i["address"]
         geo_encoded_address.address_hash = i["address_hash"]
         geo_encoded_address.region = assign_region(geo_encoded_address.lon, geo_encoded_address.lat, region)

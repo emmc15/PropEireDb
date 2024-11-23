@@ -1,4 +1,6 @@
 
+BATCH_SIZE?=10000
+
 .PHONY: start
 start:
 	@echo "Starting worker service..."
@@ -22,7 +24,7 @@ run-pipeline:
 .PHONY: run-geoencode
 run-geoencode:
 	@echo "Running geoencode..."
-	cd src && python3 cli.py geoencode-missing-addresses --batch-size ${BATCH_SIZE:-100}
+	cd src && python3 cli.py geoencode-missing-addresses --batch-size ${BATCH_SIZE}
 
 .PHONY: lint
 lint:
